@@ -54,6 +54,30 @@ func (us UsersService) Logout(accessToken string) *models.ResponseError {
 	return us.usersRepository.RemoveAccessToken(accessToken)
 }
 
+func (us UsersService) CreateUser(newUser *models.User) (*models.User, *models.ResponseError) {
+	responseErr := ValidateUser(newUser)
+	if responseErr != nil {
+		return nil, responseErr
+	}
+	return us.usersRepository.CreateUser(newUser)
+}
+
+func ValidateUser(user *models.User) *models.ResponseError {
+	if user.Username == "" {
+		return &models.ResponseError{
+			Message: "Invalid Username",
+			Status:  http.StatusBadRequest,
+		}
+	}
+	if user.Password == "" {
+		return &models.ResponseError{
+			Message: "Invalid Password",
+			Status:  http.StatusBadRequest,
+		}
+	}
+	return nil
+}
+
 func (us UsersService) AuthorizeUser(accessToken string) (bool, *models.ResponseError) {
 	if accessToken == "" {
 		return false, &models.ResponseError{

@@ -110,3 +110,70 @@ func (ur UsersRepository) RemoveAccessToken(accessToken string) *models.Response
 	}
 	return nil
 }
+
+func (ur UsersRepository) CreateUser(user *models.User) (*models.User, *models.ResponseError) {
+	ok := ur.checkDuplicateUser(user)
+	if !ok {
+		return nil, &models.ResponseError{
+			Message: "User already exists",
+			Status:  http.StatusNotAcceptable,
+		}
+	}
+	query := `insert into users(username, user_password, user_role)
+				values($1,crypt($2,gen_salt('bf')),$3)
+				returning id`
+	rows, err := ur.dbHandler.Query(query, user.Username, user.Password, "user")
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: err.Error(),
+			Status:  http.StatusInternalServerError,
+		}
+	}
+	defer rows.Close()
+	var userId string
+	for rows.Next() {
+		err := rows.Scan(&userId)
+		if err != nil {
+			return nil, &models.ResponseError{
+				Message: err.Error(),
+				Status:  http.StatusInternalServerError,
+			}
+		}
+	}
+	if rows.Err() != nil {
+		return nil, &models.ResponseError{
+			Message: "Error while reading rows",
+			Status:  http.StatusInternalServerError,
+		}
+	}
+	return &models.User{
+		ID:       userId,
+		Username: user.Username,
+		Role:     "user",
+	}, nil
+}
+
+func (ur UsersRepository) checkDuplicateUser(user *models.User) bool {
+	query := `select id from users
+				where username=$1`
+	rows, err := ur.dbHandler.Query(query, user.Username)
+	if err != nil {
+		return false
+	}
+	defer rows.Close()
+	var userId string
+	for rows.Next() {
+		err := rows.Scan(&userId)
+		if err != nil {
+			return false
+		}
+	}
+	if rows.Err() != nil {
+		return false
+	}
+	if userId == "" {
+		return true
+	} else {
+		return false
+	}
+}

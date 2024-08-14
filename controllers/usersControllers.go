@@ -1,6 +1,9 @@
 package controllers
 
 import (
+	"encoding/json"
+	"io"
+	"kabootar/models"
 	"kabootar/services"
 	"log"
 	"net/http"
@@ -44,4 +47,26 @@ func (uc UsersController) Logout(ctx *gin.Context) {
 		return
 	}
 	ctx.Status(http.StatusNoContent)
+}
+
+func (uc UsersController) CreateUser(ctx *gin.Context) {
+	body, err := io.ReadAll(ctx.Request.Body)
+	if err != nil {
+		log.Println("Error while reading create user request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	var nuser models.User
+	err = json.Unmarshal(body, &nuser)
+	if err != nil {
+		log.Println("Error while unmarshaling create user request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	response, responseErr := uc.usersService.CreateUser(&nuser)
+	if responseErr != nil {
+		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
+		return
+	}
+	ctx.JSON(http.StatusOK, response)
 }

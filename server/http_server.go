@@ -135,7 +135,7 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 
 	router := gin.Default()
 	router.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"http://192.168.29.173:3000", "http://localhost:3000"},
+		AllowOrigins: []string{"http://192.168.29.172:3000", "http://localhost:3000"},
 		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders: []string{"Origin", "Content-Type", "Authorization", "Token"},
 	}))
@@ -143,6 +143,7 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 	router.POST("/login", usersController.Login)
 	router.POST("/logout", usersController.Logout)
 	router.GET("/getmsg", PullMsg)
+	router.POST("/create", usersController.CreateUser)
 
 	hs := HttpServer{
 		config:          config,

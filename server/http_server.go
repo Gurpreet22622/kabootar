@@ -154,7 +154,7 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 
 func (hs HttpServer) Start() {
 	//err := hs.router.Run(hs.config.GetString("http.server_address"))
-	err := hs.router.Run("0.0.0.0:8080")
+	err := hs.router.Run("https://kabootar.onrender.com")
 	if err != nil {
 		log.Fatalf("Error while starting HTTP server: %v", err)
 	}

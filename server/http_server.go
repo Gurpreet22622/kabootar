@@ -143,7 +143,7 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 	router.POST("/login", usersController.Login)
 	router.POST("/logout", usersController.Logout)
 	router.GET("/getmsg", PullMsg)
-	router.POST("/create", usersController.CreateUser)
+	//router.POST("/create", usersController.CreateUser)
 
 	hs := HttpServer{
 		config:          config,

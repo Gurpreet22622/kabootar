@@ -134,7 +134,7 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"https://kabootarme.vercel.app", "http://localhost:8080"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
-		AllowHeaders:     []string{"Content-Type", "Authorization", "Origin", "Accept", "X-Requested-With"},
+		AllowHeaders:     []string{"Content-Type", "Authorization", "Origin", "Accept", "X-Requested-With", "token"},
 		ExposeHeaders:    []string{"Content-Length", "Content-Type"},
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,

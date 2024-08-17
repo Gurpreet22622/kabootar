@@ -20,10 +20,9 @@ type HttpServer struct {
 	usersController *controllers.UsersController
 }
 
-var clients = make(map[*websocket.Conn]bool) // connected clients
-var broadcast = make(chan Message)           // broadcast channel
+var clients = make(map[*websocket.Conn]bool)
+var broadcast = make(chan Message)
 
-// Define a message object
 type Message struct {
 	Username string `json:"username"`
 	Token    string `json:"token"`
@@ -34,7 +33,7 @@ var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
 	CheckOrigin: func(r *http.Request) bool {
-		return true // allow all origins
+		return true
 	},
 }
 
@@ -48,7 +47,6 @@ func handleConnections(c *gin.Context) {
 	}
 	defer ws.Close()
 
-	// Register new client
 	clients[ws] = true
 
 	for {
@@ -61,7 +59,7 @@ func handleConnections(c *gin.Context) {
 			break
 		}
 		msgRepository.SaveMessage(msg.Message, msg.Username)
-		// Send the newly received message to the broadcast channel
+
 		broadcast <- msg
 	}
 }
@@ -91,10 +89,8 @@ func PullMsg(ctx *gin.Context) {
 
 func handleMessages() {
 	for {
-		// Grab the next message from the broadcast channel
 		msg := <-broadcast
 
-		// Send it out to every client that is currently connected
 		for client := range clients {
 			err := client.WriteJSON(msg)
 			if err != nil {
@@ -135,7 +131,7 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 
 	router := gin.Default()
 	router.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"http://192.168.29.172:3000", "http://localhost:3000"},
+		AllowOrigins: []string{"http://192.168.29.172:3000", "http://localhost:3000", "https://kabootarme.vercel.app/"},
 		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders: []string{"Origin", "Content-Type", "Authorization", "Token"},
 	}))

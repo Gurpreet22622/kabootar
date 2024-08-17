@@ -25,7 +25,7 @@ func InitDatabase(config *viper.Viper) *sql.DB {
 	//maxIdleConnections := viper.GetInt("DB_MAX_IDLE_CONNECTIONS")
 	//maxOpenConnections := viper.GetInt("DB_MAX_OPEN_CONNECTIONS")
 	//connectionMaxLifetime := viper.GetDuration("DB_CONNECTION_MAX_LIFETIME")
-	driverName := viper.GetString("postgres")
+	driverName := "postgres"
 
 	if connectionString == "" {
 		log.Fatal("Database connection string is missing")

@@ -131,7 +131,7 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 
 	router := gin.Default()
 	router.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"http://192.168.29.172:3000", "http://localhost:3000", "https://kabootarme.vercel.app/"},
+		AllowOrigins: []string{"http://192.168.29.172:3000", "http://localhost:3000", "https://kabootar.onrender.com"},
 		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders: []string{"Origin", "Content-Type", "Authorization", "Token"},
 	}))
